@@ -5,6 +5,7 @@ export interface FetchNotesParams {
   page: number;
   perPage: number;
   search?: string;
+  tag?: NoteTag;
   signal?: AbortSignal;
 }
 export interface FetchNotesResponse {

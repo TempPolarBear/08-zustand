@@ -8,12 +8,16 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
+interface PageSelection {
+  selected: number;
+}
+
 export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
   return (
     <ReactPaginate
       pageCount={totalPages}
       forcePage={currentPage - 1}
-      onPageChange={({ selected }) => onPageChange(selected + 1)}
+      onPageChange={({ selected }: PageSelection) => onPageChange(selected + 1)}
       containerClassName={css.pagination}
       activeClassName={css.active}
       previousLabel="←"

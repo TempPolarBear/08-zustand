@@ -1,15 +1,20 @@
 'use client';
-import { useEffect, useRef, type MouseEvent, type ReactNode } from 'react';
+import { useEffect, useSyncExternalStore, type MouseEvent, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import css from './Modal.module.css';
 
 interface ModalProps {
   children: ReactNode;
   onClose: () => void;
+  label?: string;
 }
 
-export default function Modal({ children, onClose }: ModalProps) {
-  const ref = useRef<HTMLDivElement>(null);
+const subscribe = () => () => {};
+const getSnapshot = () => true;
+const getServerSnapshot = () => false;
+
+export default function Modal({ children, onClose, label = 'Create note' }: ModalProps) {
+  const mounted = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -23,19 +28,18 @@ export default function Modal({ children, onClose }: ModalProps) {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [onClose]);
+  if (!mounted) return null;
   return createPortal(
     <div
       className={css.backdrop}
       role="dialog"
       aria-modal="true"
-      aria-label="Create note"
+      aria-label={label}
       onClick={(event: MouseEvent<HTMLDivElement>) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div ref={ref} className={css.modal}>
-        {children}
-      </div>
+      <div className={css.modal}>{children}</div>
     </div>,
     document.body,
   );

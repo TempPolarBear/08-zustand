@@ -1,16 +1,20 @@
 'use client';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useDebouncedCallback } from 'use-debounce';
-import { fetchNotes } from '@/lib/api';
+import { NOTES_PER_PAGE, notesQueryOptions } from '@/lib/queries';
+import type { NoteTag } from '@/types/note';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
 import NoteList from '@/components/NoteList/NoteList';
 import Modal from '@/components/Modal/Modal';
 import NoteForm from '@/components/NoteForm/NoteForm';
 import css from './notes.module.css';
-const perPage = 12;
-export default function NotesClient() {
+interface NotesClientProps {
+  tag?: NoteTag;
+}
+
+export default function NotesClient({ tag }: NotesClientProps) {
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -20,9 +24,9 @@ export default function NotesClient() {
     setSearch(value.trim());
     setPage(1);
   }, 350);
+  useEffect(() => () => debounce.cancel(), [debounce]);
   const query = useQuery({
-    queryKey: ['notes', page, perPage, search],
-    queryFn: ({ signal }) => fetchNotes({ page, perPage, search, signal }),
+    ...notesQueryOptions({ page, perPage: NOTES_PER_PAGE, search, tag }),
     placeholderData: keepPreviousData,
   });
   const created = () => {
@@ -38,7 +42,7 @@ export default function NotesClient() {
       <div className={css.toolbar}>
         <SearchBox
           value={searchInput}
-          onChange={(value) => {
+          onChange={(value: string) => {
             setSearchInput(value);
             debounce(value);
           }}
