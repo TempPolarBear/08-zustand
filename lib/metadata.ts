@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-export const SITE_URL = 'https://08-zustand.vercel.app';
+export const SITE_URL = 'https://08-zustand-psi-two.vercel.app';
 
 const ogImage = {
   url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
