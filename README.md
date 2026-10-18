@@ -1,42 +1,27 @@
-# NoteHub — GoIT HW07
+# NoteHub — GoIT HW08
 
-A Next.js application for viewing, searching, creating, and deleting personal notes.
+A Next.js App Router application for browsing, creating, and deleting personal notes.
+This project continues the accepted HW07 repository at commit
+`8a2aa922fcd1c1d8182ff1619591fbc108a056bf`.
 
 ## Features
 
-- Notes list with search, pagination, and note creation
-- Tag filters in a parallel sidebar and a validated catch-all route
-- Note deletion, canonical detail pages, and intercepted note previews
-- Server-side data prefetching and client-side TanStack Query hydration
-- Loading and error states for note pages
+- Server-prefetched notes with TanStack Query hydration, tag filters, search, and pagination
+- Canonical note pages and intercepted modal previews
+- Dedicated note creation page at `/notes/action/create`
+- Zustand draft persistence in browser localStorage, including after reload or Cancel
+- Dynamic page and Open Graph metadata for filters and individual notes
+- Custom 404 page and Roboto through `next/font/google`
 
-## Technologies
-
-- Next.js
-- React
-- TypeScript
-- TanStack Query
-- Axios
-- Formik and Yup
-- CSS Modules
-
-## Getting Started
-
-### Installation
+## Setup
 
 ```bash
 npm install
 ```
 
-### Environment variables
-
-Create `.env.local` and set:
-
-```env
-NEXT_PUBLIC_NOTEHUB_TOKEN=
-```
-
-### Development
+Set `NEXT_PUBLIC_NOTEHUB_TOKEN` in `.env.local` for local development.
+Set the same variable in Vercel Production and Preview for deployment.
+Never commit its value.
 
 ```bash
 npm run dev
@@ -45,32 +30,20 @@ npm run dev
 ## Routes
 
 - `/` — welcome page
-- `/notes/filter/all` — all notes (the API receives no tag)
+- `/notes/filter/all` — all notes without an API tag parameter
 - `/notes/filter/Todo`, `/notes/filter/Work`, `/notes/filter/Personal`,
   `/notes/filter/Meeting`, `/notes/filter/Shopping` — filtered notes
-- `/notes/[id]` — note details
+- `/notes/[id]` — canonical note details
+- `/notes/action/create` — native creation form with a persisted draft
 
-Soft navigation from a list opens `app/@modal/(.)notes/[id]` over that list.
-Closing the shared modal uses `router.back()`, preserving the originating filter,
-search, and page. Direct navigation or reload renders the full detail page.
-Unknown routes and invalid filters use the custom 404 page.
+Soft navigation to a note opens the interception preview. Direct navigation or
+reload shows the full detail page. The shared Modal remains in use for previews.
+Canceling creation returns to the previous page and keeps the draft. Successful
+creation clears it, invalidates note lists, and redirects to all notes.
 
-## Implementation
-
-Based on the accepted HW06 `main` commit
-`fd9381a770cb40a39fec8b467b47595f518a6ce4` from
-[TempPolarBear/06_notehub_nextjs](https://github.com/TempPolarBear/06_notehub_nextjs).
-Next.js remains at `16.3.8`.
-
-Server prefetch and client queries share the key
-`['notes', page, perPage, search, tag]` and hydrate through `HydrationBoundary`.
-Search is debounced by 350 ms and resets pagination. Changing the tag remounts
-the list state. Creation and deletion invalidate all notes queries.
-
-CSS Modules come from the official
-[GoIT hw-07 branch](https://github.com/goitacademy/react-notehub-styles/tree/hw-07).
-The branch does not provide a separate 404 stylesheet, so that page reuses its
-Home styles in a dedicated CSS Module. See `STYLES-LICENSE`.
+CSS Modules are from the official
+[GoIT hw-08 branch](https://github.com/goitacademy/react-notehub-styles/tree/hw-08).
+The custom 404 stylesheet continues from HW07. See `STYLES-LICENSE`.
 
 ## Validation
 
@@ -80,6 +53,3 @@ npm run build
 npm run format:check
 git diff --check
 ```
-
-Set `NEXT_PUBLIC_NOTEHUB_TOKEN` in Vercel Production and Preview before deploying.
-Keep `.env.local`, `.next`, `node_modules`, and `.vercel` out of Git.

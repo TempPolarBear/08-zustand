@@ -1,6 +1,7 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
-import { notFound } from 'next/navigation';
-import type { NoteTag } from '@/types/note';
+import type { Metadata } from 'next';
+import { getFilterTag } from '@/lib/noteFilters';
+import { createOpenGraph } from '@/lib/metadata';
 import { NOTES_PER_PAGE, notesQueryOptions } from '@/lib/queries';
 import NotesClient from './Notes.client';
 
@@ -10,25 +11,25 @@ interface NotesPageProps {
 
 export const dynamic = 'force-dynamic';
 
+export async function generateMetadata({ params }: NotesPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const tag = getFilterTag(slug);
+  const filter = tag ?? 'all';
+  const title = tag ? `${tag} notes | NoteHub` : 'All notes | NoteHub';
+  const description = tag
+    ? `Browse and manage your ${tag} notes in NoteHub.`
+    : 'Browse and manage all your notes in NoteHub.';
+  return {
+    title,
+    description,
+    openGraph: createOpenGraph(title, description, `/notes/filter/${filter}`),
+  };
+}
+
 export default async function NotesPage({ params }: NotesPageProps) {
   const { slug } = await params;
-  if (slug.length !== 1) notFound();
-  const filter = slug[0];
-  let tag: NoteTag | undefined;
-  switch (filter) {
-    case 'all':
-      tag = undefined;
-      break;
-    case 'Todo':
-    case 'Work':
-    case 'Personal':
-    case 'Meeting':
-    case 'Shopping':
-      tag = filter;
-      break;
-    default:
-      notFound();
-  }
+  const tag = getFilterTag(slug);
+  const filter = tag ?? 'all';
 
   const client = new QueryClient();
   await client.prefetchQuery(

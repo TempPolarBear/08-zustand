@@ -1,11 +1,28 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { Roboto } from 'next/font/google';
 import 'modern-normalize/modern-normalize.css';
 import './globals.css';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import TanStackProvider from '@/components/TanStackProvider/TanStackProvider';
-export const metadata: Metadata = { title: 'NoteHub', description: 'Personal notes manager' };
+import { createOpenGraph } from '@/lib/metadata';
+
+const roboto = Roboto({
+  weight: ['400', '500', '700'],
+  variable: '--font-roboto',
+  display: 'swap',
+  subsets: ['latin'],
+});
+
+const title = 'NoteHub';
+const description = 'Create, organize, and find your personal notes with NoteHub.';
+
+export const metadata: Metadata = {
+  title,
+  description,
+  openGraph: createOpenGraph(title, description, '/'),
+};
 interface RootLayoutProps {
   children: ReactNode;
   modal: ReactNode;
@@ -14,7 +31,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children, modal }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body>
+      <body className={roboto.variable}>
         <TanStackProvider>
           <Header />
           {children}
