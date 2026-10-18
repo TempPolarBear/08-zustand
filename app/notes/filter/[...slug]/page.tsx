@@ -1,7 +1,6 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import type { Metadata } from 'next';
 import { getFilterTag } from '@/lib/noteFilters';
-import { createOpenGraph } from '@/lib/metadata';
 import { NOTES_PER_PAGE, notesQueryOptions } from '@/lib/queries';
 import NotesClient from './Notes.client';
 
@@ -22,7 +21,19 @@ export async function generateMetadata({ params }: NotesPageProps): Promise<Meta
   return {
     title,
     description,
-    openGraph: createOpenGraph(title, description, `/notes/filter/${filter}`),
+    openGraph: {
+      title,
+      description,
+      url: `https://08-zustand-psi-two.vercel.app/notes/filter/${filter}`,
+      images: [
+        {
+          url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
+          width: 1536,
+          height: 1024,
+          alt: 'NoteHub application preview',
+        },
+      ],
+    },
   };
 }
 

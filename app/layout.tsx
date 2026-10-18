@@ -6,7 +6,6 @@ import './globals.css';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import TanStackProvider from '@/components/TanStackProvider/TanStackProvider';
-import { createOpenGraph } from '@/lib/metadata';
 
 const roboto = Roboto({
   weight: ['400', '500', '700'],
@@ -21,7 +20,19 @@ const description = 'Create, organize, and find your personal notes with NoteHub
 export const metadata: Metadata = {
   title,
   description,
-  openGraph: createOpenGraph(title, description, '/'),
+  openGraph: {
+    title,
+    description,
+    url: 'https://08-zustand-psi-two.vercel.app/',
+    images: [
+      {
+        url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
+        width: 1536,
+        height: 1024,
+        alt: 'NoteHub application preview',
+      },
+    ],
+  },
 };
 interface RootLayoutProps {
   children: ReactNode;

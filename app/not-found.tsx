@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { createOpenGraph } from '@/lib/metadata';
 import css from './not-found.module.css';
 
 const title = '404 - Page not found | NoteHub';
@@ -8,7 +7,19 @@ const description = 'The page you are looking for does not exist.';
 export const metadata: Metadata = {
   title,
   description,
-  openGraph: createOpenGraph(title, description, '/'),
+  openGraph: {
+    title,
+    description,
+    url: 'https://08-zustand-psi-two.vercel.app/',
+    images: [
+      {
+        url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
+        width: 1536,
+        height: 1024,
+        alt: 'NoteHub application preview',
+      },
+    ],
+  },
 };
 
 export default function NotFound() {
